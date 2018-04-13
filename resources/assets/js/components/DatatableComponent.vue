@@ -1,108 +1,101 @@
-<template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card card-default">
-                    <div class="card-header">DataTable Component</div>
-
-                    <div class="card-body">
-                        <div id="example_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
-                            <div class="row">
-                                <div class="col-sm-12 col-md-6">
-                                    <div class="dataTables_length" id="example_length">
-                                        <label>Show
-                                            <select name="example_length" 
-                                                v-model="limit"
-                                                class="form-control form-control-sm"
-                                                @change="handleChangeLimit">
-                                                <option value="10">10</option>
-                                                <option value="25">25</option>
-                                                <option value="50">50</option>
-                                                <option value="100">100</option>
-                                            </select> entries</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-6">
-                                    <div id="example_filter" class="dataTables_filter">
-                                        <label>Search:
-                                            <input type="text" v-on:keyup="handleSearch" class="form-control form-control-sm" placeholder="" aria-controls="example">
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <table id="example" class="table table-striped table-bordered dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
-                                        <thead>
-                                            <tr role="row">
-                                                <slot name="columns">
-                                                    <th v-for="column in columns" 
-                                                        :class="(column.sort) ? (sorting.sort_column == column.field) ? sorting.sort_class : ' sorting' : ''"
-                                                        @click="sortByColumn(column)"
-                                                    >
-                                                        {{ column.label }}
-                                                    </th>
-                                                </slot>
-                                            </tr>
-                                        </thead>
-                                        <tbody :class="(loading) ? 'loader' : ''">
-                                            <tr v-for="item in items">
-                                                <slot :row="item">
-                                                    <td v-for="column in columns" 
-                                                        v-if="hasValue(item, column)">
-                                                        {{ itemValue(item, column) }}
-                                                    </td>
-                                                    <td>
-                                                        <slot name="btn-show" :itemData="item" :handleevent="handleAction">
-                                                            <button 
-                                                                v-show="btnAction && btnAction.show"
-                                                                type="button" 
-                                                                class="btn btn-outline-info btn-sm"
-                                                                title="show details"
-                                                                @click="handleAction('show', item)">
-                                                                <i class="fa fa-search-plus"></i>        
-                                                            </button>
-                                                        </slot>
-                                                        
-                                                        <slot name="btn-edit" :itemData="item">
-                                                            <button 
-                                                                v-show="btnAction && btnAction.edit"
-                                                                type="button" 
-                                                                class="btn btn-outline-primary btn-sm"
-                                                                title="Edit"
-                                                                @click="handleAction('edit', item)">
-                                                                <i class="fa fa-edit"></i>        
-                                                            </button>
-                                                        </slot>
-                                                        
-                                                        <slot name="btn-delete" :itemData="item">
-                                                            <button 
-                                                                v-show="btnAction && btnAction.delete"
-                                                                type="button" 
-                                                                class="btn btn-outline-danger btn-sm"
-                                                                title="Delete"
-                                                                @click="handleAction('delete', item)">
-                                                                <i class="fa fa-trash"></i>        
-                                                            </button>
-                                                        </slot>
-                                                    </td>
-                                                </slot>
-                                            </tr>
-                                            <tr v-if="items.length === 0">
-                                                <td :colspan="columns.length" align="center"><strong>No Record Found</strong></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            
-                            <pagination :meta="meta"></pagination>
-                            
-                        </div>
-                    </div>
+<template>     
+    <div id="example_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length" id="example_length">
+                    <label>Show
+                        <select name="example_length" 
+                            v-model="limit"
+                            class="form-control form-control-sm"
+                            @change="handleChangeLimit">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> entries</label>
                 </div>
             </div>
+            <div class="col-sm-12 col-md-6" v-show="searchBoxIsVisible">
+                <slot name="search-box" :handleSearch="hasOwnSearchHandler">   
+                    <div id="example_filter" class="dataTables_filter">
+                        <label>Search:
+                            <input type="text" 
+                                @keyup="handleSearch" 
+                                class="form-control form-control-sm" 
+                                placeholder="search" 
+                                aria-controls="example">
+                        </label>
+                    </div>                    
+                </slot> 
+            </div>
         </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="example" class="table table-striped table-bordered dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
+                    <thead>
+                        <tr role="row">
+                            <slot name="columns">
+                                <th v-for="column in columns" 
+                                    :class="(column.sort) ? (sorting.sort_column == column.field) ? sorting.sort_class : ' sorting' : ''"
+                                    @click="sortByColumn(column)"
+                                >
+                                    {{ column.label }}
+                                </th>
+                            </slot>
+                        </tr>
+                    </thead>
+                    <tbody :class="(loading) ? 'loader' : ''">
+                        <tr v-for="item in items">
+                            <slot :row="item">
+                                <td v-for="column in columns" 
+                                    v-if="hasValue(item, column)">
+                                    {{ itemValue(item, column) }}
+                                </td>
+                                <td v-show="btnAction">
+                                    <slot name="btn-show" :data="item" :handleAction="handleAction">
+                                        <button 
+                                            v-show="btnAction && btnAction.show"
+                                            type="button" 
+                                            class="btn btn-outline-info btn-sm"
+                                            title="show details"
+                                            @click="handleAction('show', item)">
+                                            <i class="fa fa-search-plus"></i>        
+                                        </button>
+                                    </slot>
+                                    
+                                    <slot name="btn-edit" :data="item">
+                                        <button 
+                                            v-show="btnAction && btnAction.edit"
+                                            type="button" 
+                                            class="btn btn-outline-primary btn-sm"
+                                            title="Edit"
+                                            @click="handleAction('edit', item)">
+                                            <i class="fa fa-edit"></i>        
+                                        </button>
+                                    </slot>
+                                    
+                                    <slot name="btn-delete" :data="item">
+                                        <button 
+                                            v-show="btnAction && btnAction.delete"
+                                            type="button" 
+                                            class="btn btn-outline-danger btn-sm"
+                                            title="Delete"
+                                            @click="handleAction('delete', item)">
+                                            <i class="fa fa-trash"></i>        
+                                        </button>
+                                    </slot>
+                                </td>
+                            </slot>
+                        </tr>
+                        <tr v-if="items.length === 0">
+                            <td :colspan="columns.length" align="center"><strong>No Record Found</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <pagination :meta="meta" @changed="fetch"></pagination>                            
     </div>
 </template>
 
@@ -115,19 +108,11 @@
                 type: [Object, Array],
                 required: true
             },
-            data: {
-                required: true
-            },
-            url: {
-                default: window.location.href
-            },
-            btnAction: {
-                default: false
-            },
-            searchColumns: {
-                default: false
-            }
-
+            data: { required: true },
+            url: { default: window.location.href },
+            btnAction: { default: false },
+            searchBox: { default: true },
+            searchColumns: { default: false }
         },
         mounted() {
             if(this.searchColumns === false) {
@@ -135,7 +120,6 @@
             } else {
                 this.dbSearchColumns = this.searchColumns
             }
-                console.log(this.dbSearchColumns)
             setTimeout(() => this.pushItemOrMetaData(this.data), 500)
         },
         data() {
@@ -166,17 +150,21 @@
         components: {
             pagination
         },
-        // computed: {
-        //     tblHeaders() {
-        //         return this.columns.map((column) => {
-        //             let header = []
-        //             header['sort'] = (!('sort' in column)) ? true : column.sort
-        //             header['field'] = (!('field' in column)) ? false : column.field
-        //             header['label'] = column.label
-        //             return header
-        //         })
-        //     }
-        // },
+        computed: {
+            /*tblHeaders() {
+                return this.columns.map((column) => {
+                    let header = []
+                    header['sort'] = (!('sort' in column)) ? true : column.sort
+                    header['field'] = (!('field' in column)) ? false : column.field
+                    header['label'] = column.label
+                    return header
+                })
+            }*/
+
+            searchBoxIsVisible() {
+                return JSON.parse(this.searchBox)
+            }
+        },
         methods: {
             hasValue (item, column) {
                 return item[column.field] !== undefined
@@ -197,14 +185,12 @@
                 self.meta.next_page_url  = response.next_page_url;
                 self.meta.prev_page_url  = response.prev_page_url;
                 self.meta.from  = response.from;
-                self.meta.to   = response.to;
-                
+                self.meta.to   = response.to;                
                 self.limit = self.meta.per_page
-
                 //if('data' in response && response.data.length > 0) {}
             },
             
-            toPage(page) {
+            fetch(page) {
                 this.loading = true
                 this.page = page
                 let requestParam = {
@@ -236,20 +222,25 @@
                         this.sorting['sort_class'] = 'sorting_desc'
                         this.sorting['sort_by'] = 'desc'
                     }
-                    this.toPage(this.page)                    
+                    this.fetch(this.page)                    
                 }
             },
 
-            handleAction(actionType, item, url = false) {
+            handleAction(...params) {
+                let [actionType, data, ownHandler] = params
+                console.log(actionType, data, ownHandler)
+                if(ownHandler == false) {
+                    return this.$emit('action', [actionType, data])
+                }
                 alert('add you own template for action type : '+ actionType)
             },
 
             handleChangeLimit() {
                 let totalPage = Math.round(this.meta.total/this.limit)
                 if(totalPage < this.page) {
-                    this.toPage(totalPage)
+                    this.fetch(totalPage)
                 }
-                this.toPage(this.page)
+                this.fetch(this.page)
             },
 
             handleSearch: _.debounce( function(e) {
@@ -258,8 +249,15 @@
                     return;
 
                 this.searchQuery = inputVal
-                this.toPage(1)   
+                this.fetch(1)   
             }, 500),
+
+            hasOwnSearchHandler(slug) {
+                if(slug !== false) {
+                    return this.handleSearch(event)
+                }
+                this.$emit('search')
+            }
         }
     }
 </script>

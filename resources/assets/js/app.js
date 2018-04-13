@@ -18,5 +18,13 @@ window.Vue = require('vue');
 Vue.component('datatable-component', require('./components/DatatableComponent.vue'));
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    methods: {
+    	handleSearchByOwn() {
+    		console.log('This is own search handler: ', event.target.value)
+    	},
+    	handleActionByOwn(data) {
+    		console.log('This is own search handler: ', data)
+    	}
+    }
 });

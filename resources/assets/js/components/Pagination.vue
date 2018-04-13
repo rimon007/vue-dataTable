@@ -1,4 +1,4 @@
-<template>
+<template> 
     <div class="row">
         <div class="col-sm-12 col-md-5">
             <div class="dataTables_info" id="example_info" role="status" aria-live="polite">Showing {{ meta.from }} to {{ meta.to }} of {{ meta.total }} entries</div>
@@ -10,7 +10,7 @@
                     <li v-for="page in meta.last_page" 
                         class="page-item" 
                         :class="{ active: meta.current_page == page }" >
-                        <a  href="#" class="page-link" @click.prevent="goPage(page)">{{ page }}</a>
+                        <a  href="#" class="page-link" @click.prevent="broadcast(page)">{{ page }}</a>
                     </li>
                 </ul>
 
@@ -18,7 +18,7 @@
                     <li class="page-item" :class="{ disabled: meta.current_page == 1 }" >
                         <a  href="#" 
                             class="page-link" 
-                            @click.prevent="goPage(1)">
+                            @click.prevent="broadcast(1)">
                             <i class="fa fa-fast-backward"></i>
                         </a>
                     </li>
@@ -26,7 +26,7 @@
                     <li class="page-item" :class="{ disabled: meta.current_page == 1}" >
                         <a  href="#" 
                             class="page-link" 
-                            @click.prevent="goPage(meta.current_page - 1)">
+                            @click.prevent="broadcast(meta.current_page - 1)">
                             <i class="fa fa-backward"></i>
                         </a>
                     </li>                
@@ -34,13 +34,13 @@
                     <li v-for="page in _.range(min_page, max_page)" 
                         class="page-item"
                         :class="{ active: meta.current_page == page}">
-                        <a  href="#" class="page-link" @click.prevent="goPage(page)">{{ page }}</a>
+                        <a  href="#" class="page-link" @click.prevent="broadcast(page)">{{ page }}</a>
                     </li>
 
                     <li class="page-item" :class="{ disabled: meta.current_page == meta.last_page }" >
                         <a  href="#" 
                             class="page-link" 
-                            @click.prevent="goPage(meta.current_page + 1)">
+                            @click.prevent="broadcast(meta.current_page + 1)">
                             <i class="fa fa-forward"></i>
                         </a>
                     </li>
@@ -48,7 +48,7 @@
                     <li class="page-item" :class="{ disabled: meta.current_page == meta.last_page }" >
                         <a  href="#" 
                             class="page-link" 
-                            @click.prevent="goPage(meta.last_page)" >
+                            @click.prevent="broadcast(meta.last_page)" >
                             <i class="fa fa-fast-forward"></i>
                         </a>
                     </li>
@@ -69,29 +69,19 @@
             <li v-for="page in meta.last_page" 
                 class="page-item" 
                 :class="{ active: meta.current_page == page }" >
-                <a  href="#" class="page-link" @click.prevent="goPage(page)">{{ page }}</a>
+                <a  href="#" class="page-link" @click.prevent="broadcast(page)">{{ page }}</a>
             </li>
         </ul>
     </span>
 </div>
 
 <div class="pagination-row" v-else>
-
-    <span class="pull-left" 
-          style="min-height: 40px;">
-        <select class="form-control input-sm" v-model="selectGoto" @change="goPage(selectGoto)">
-            <option value="0" selected disabled>goto</option>
-            <option v-for="opt in gotoPage" :value="opt">{{ opt }}</option>
-        </select>
-        Page {{ meta.current_page }} from {{ meta.last_page }} 
-    </span>
-
     <span class="pull-right">
         <ul class="pagination" style="margin-top:-10px">
             <li class="page-item" :class="{ disabled: meta.current_page == 1 }" >
                 <a  href="#" 
                     class="page-link" 
-                    @click.prevent="goPage(1)">
+                    @click.prevent="broadcast(1)">
                     <i class="fa fa-fast-backward"></i>
                 </a>
             </li>
@@ -99,20 +89,20 @@
             <li class="page-item" :class="{ disabled: meta.current_page == 1}" >
                 <a  href="#" 
                     class="page-link" 
-                    @click.prevent="goPage(meta.current_page - 1)">
+                    @click.prevent="broadcast(meta.current_page - 1)">
                     <i class="fa fa-backward"></i>
                 </a>
             </li>                
   
             <li v-for="page in _.range(min_page, max_page)" 
                 :class="{ active: meta.current_page == page}">
-                <a  href="#" class="page-link" @click.prevent="goPage(page)">{{ page }}</a>
+                <a  href="#" class="page-link" @click.prevent="broadcast(page)">{{ page }}</a>
             </li>
 
             <li class="page-item" :class="{ disabled: meta.current_page == meta.last_page }" >
                 <a  href="#" 
                     class="page-link" 
-                    @click.prevent="goPage(meta.current_page + 1)">
+                    @click.prevent="broadcast(meta.current_page + 1)">
                     <i class="fa fa-forward"></i>
                 </a>
             </li>
@@ -120,7 +110,7 @@
             <li class="page-item" :class="{ disabled: meta.current_page == meta.last_page }" >
                 <a  href="#" 
                     class="page-link" 
-                    @click.prevent="goPage(meta.last_page)" >
+                    @click.prevent="broadcast(meta.last_page)" >
                     <i class="fa fa-fast-forward"></i>
                 </a>
             </li>
@@ -138,7 +128,6 @@
         data() {
             return {
                 page: 0,
-                selectGoto: 0
             }
         },
         computed: {
@@ -170,8 +159,9 @@
             }
         },
         methods: {
-            goPage(page) {
-                this.$parent.toPage(page)
+            broadcast(page) {
+                this.$emit('changed', page)
+                //this.$parent.toPage(page)
             }
         }
     }

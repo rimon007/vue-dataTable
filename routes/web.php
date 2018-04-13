@@ -12,6 +12,7 @@
 */
 
 Route::get('/', function () {
+	return redirect('/paginate');
 	$limit = request('limit') ?? 10;
 	$orderColumn = request('orderColumn') ?? 'created_at';
 	$orderBy = request('orderBy') ?? 'desc';

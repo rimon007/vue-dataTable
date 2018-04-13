@@ -14,29 +14,62 @@
     </head>
     <body>
         <div id="app">
-            <datatable-component
-                :columns="{{ json_encode([
-                    ['label' => 'ID', 'field' => 'id', 'sort' => true],
-                    ['label' => 'Admission Roll', 'field' => 'admission_roll', 'sort' => true],
-                    ['label' => 'Name', 'field' => 'applicants_name', 'sort' => true],
-                    ['label' => 'Roll', 'field' => 'roll', 'sort' => true],
-                    ['label' => 'Group', 'field' => 'group'],
-                    ['label' => 'Action'],
-                ]) }}"
-                :data="{{ json_encode($data) }}"
-                :btn-action="{{ json_encode(['show' => true,'edit' => true,'delete' => true,]) }}"
-                search-columns="id, admission_roll, applicants_name, roll, group"
-            >
-                <template slot="btn-show" slot-scope="props">
-                    <button 
-                        type="button" 
-                        class="btn btn-outline-success btn-sm"
-                        title="Delete"
-                        @click="props.handleevent('show', props.itemData)">
-                        <i class="fa fa-info"></i>        
-                    </button>
-                </template>    
-            </datatable-component>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <div class="card card-default">
+                            <div class="card-header">DataTable Component</div>
+
+                            <div class="card-body">
+                                <datatable-component
+                                    :columns="{{ json_encode([
+                                        ['label' => 'ID', 'field' => 'id', 'sort' => true],
+                                        ['label' => 'Admission Roll', 'field' => 'admission_roll', 'sort' => true],
+                                        ['label' => 'Name', 'field' => 'applicants_name', 'sort' => true],
+                                        ['label' => 'Roll', 'field' => 'roll', 'sort' => true],
+                                        ['label' => 'Group', 'field' => 'group'],
+                                        ['label' => 'Action'],
+                                    ]) }}"
+                                    :data="{{ json_encode($data) }}"
+                                    :btn-action="{{ json_encode(['show' => true,'edit' => true,'delete' => true,]) }}"
+                                    search-columns="id, admission_roll, applicants_name, roll, group"
+                                    @search="handleSearchByOwn"
+                                    @action="handleActionByOwn"
+                                >
+                                    <!-- <template slot="search-box" slot-scope="props">
+                                        <div class="form-inline pull-right">
+                                            <select class="form-control mb-2 mr-sm-2 mb-sm-0" @change="props.handleSearch(false)">
+                                                <option value="" disabled="" selected="">choose</option>
+                                                <option value="Md. Mithon Ali">Md. Mithon Ali</option>
+                                                <option value="Md. Dulal Hossain">Md. Dulal Hossain</option>
+                                                <option value="Mst. Jannaton Moni">Mst. Jannaton Moni</option>
+                                                <option value="Rima">Rima</option>
+                                            </select>   
+                                            <select class="form-control mb-2 mr-sm-2 mb-sm-0" @change="props.handleSearch">
+                                                <option value="" disabled="" selected="">choose</option>
+                                                <option value="131421">131421</option>
+                                                <option value="131251">131251</option>
+                                                <option value="325601">325601</option>
+                                                <option value="131473">131473</option>
+                                            </select>                                               
+                                        </div>
+                                    </template> -->
+                                    <template slot="btn-show" slot-scope="props">
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-outline-success btn-sm"
+                                            title="Delete"
+                                            @click="props.handleAction('show', props.data, false)">
+                                            <i class="fa fa-info"></i>        
+                                        </button>
+                                    </template>    
+                                </datatable-component>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <script src="/js/app.js"></script>
     </body>
