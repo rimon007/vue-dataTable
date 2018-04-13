@@ -33,7 +33,7 @@ class DataTableFilters extends QueryFilter {
 		$searchColumns = null;
 		$totalColumn = count($this->searchColumns) - 1;
 		foreach($this->searchColumns as $key => $column) {
-			$searchColumns .= ($totalColumn !== $key) ? "`$column`, " : "`$column`";
+			$searchColumns .= ($totalColumn !== $key) ? "`$column`, ' ', " : "`$column`";
 		}
 		
 		return $this->builder->whereRaw("(CONCAT($searchColumns) LIKE ?)", ['%'.$str.'%']);
