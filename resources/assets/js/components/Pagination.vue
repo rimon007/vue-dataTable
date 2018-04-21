@@ -1,11 +1,11 @@
 <template> 
-    <div class="row">
+    <div class="row" v-if="meta.total">
         <div class="col-sm-12 col-md-5">
-            <div class="dataTables_info" id="example_info" role="status" aria-live="polite">Showing {{ meta.from }} to {{ meta.to }} of {{ meta.total }} entries</div>
+            <div class="dataTables_info">Showing {{ meta.from }} to {{ meta.to }} of {{ meta.total }} entries</div>
         </div>
 
         <div class="col-sm-12 col-md-7" v-if="meta.total && meta.last_page > 1">
-            <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
+            <div class="pagination-row pull-right">
                 <ul class="pagination" v-if="meta.last_page < 5">
                     <li v-for="page in meta.last_page" 
                         class="page-item" 

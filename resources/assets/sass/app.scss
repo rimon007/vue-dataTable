@@ -1,6 +1,6 @@
 
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Quicksand:300,400,500,700");
 
 // Variables
 @import "variables";
@@ -8,7 +8,44 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
+@import url('datatables.min.css');
+
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.loader {
+    color: transparent !important;
+    pointer-events: none;
+    position: relative;
+}
+
+.loader:after {
+    animation: spinAround 500ms infinite linear;
+    border: 2px solid #4485F3;
+    border-radius: 290486px;
+    border-right-color: transparent;
+    border-top-color: transparent;
+    content: "";
+    display: block;
+    width: 1.5em;
+    height: 1.5em;
+    position: relative;
+    position: absolute;
+    left: calc(50% - (1.5em / 2));
+    top: calc(50% - (1.5em / 2));
+    position: absolute !important;
+}
+
+@keyframes spinAround {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    
+    to {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
 }

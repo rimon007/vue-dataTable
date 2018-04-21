@@ -15,4 +15,12 @@ class PaginationController extends Controller
 		}
     	return view('server-side-dataTable', compact('data'));
     }
+    
+    public function vTable() {
+    	$data = SearchInfo::paginate(request('limit') ?? 15);
+    	if(request()->ajax()) {
+			return $data;
+		}
+		return view('v-table', compact('data'));
+    }
 }

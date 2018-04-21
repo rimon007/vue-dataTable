@@ -14,7 +14,7 @@
     </head>
     <body>
         <div id="app">
-            <datatable-component
+            <v-datatable
                 :columns="{{ json_encode([
                     ['label' => 'ID', 'field' => 'id', 'sort' => true],
                     ['label' => 'Admission Roll', 'field' => 'admission_roll', 'sort' => true],
@@ -38,7 +38,7 @@
                         <i class="fa fa-info"></i>        
                     </button>
                 </template>    
-            </datatable-component>
+            </v-datatable>
         </div>
         <script src="/js/app.js"></script>
     </body>

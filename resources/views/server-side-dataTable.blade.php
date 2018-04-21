@@ -21,7 +21,7 @@
                             <div class="card-header">DataTable Component</div>
 
                             <div class="card-body">
-                                <datatable-component
+                                <v-datatable
                                     :columns="{{ json_encode([
                                         ['label' => 'ID', 'field' => 'id', 'sort' => true],
                                         ['label' => 'Admission Roll', 'field' => 'admission_roll', 'sort' => true],
@@ -63,7 +63,7 @@
                                             <i class="fa fa-info"></i>        
                                         </button>
                                     </template>    
-                                </datatable-component>
+                                </v-datatable>
 
                             </div>
                         </div>

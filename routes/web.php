@@ -27,3 +27,4 @@ Route::get('/', function () {
 
 Route::get('paginate', 'PaginationController@index');
 Route::post('paginate', 'PaginationController@index');
+Route::get('v-table', 'PaginationController@vTable');
