@@ -10,7 +10,7 @@
                 </slot>
 		    </thead>
 		    <tbody :class="loading ? 'loader' : ''">
-                <tr v-for="item in items">
+                <tr v-for="item in getItems">
                     <slot :row="item">
                         <td v-for="column in itemFields" 
                             v-if="hasValue(item, column)">
@@ -34,16 +34,13 @@
             data: { required: true },
 		},
 		mounted() {
-			this.loading = true
-			setTimeout(() => {
-				this.pushItemOrMetaData(this.data)
-				this.loading = false
-			}, 500)
+			this.dataItems = this.data
 		},
 		data() {			
             return {
             	loading: false,
 	            items: [],
+	            dataItems: [],
 	            page: 0,
 	            meta: {
 	                total: 0,
@@ -63,6 +60,10 @@
 			},
 			itemFields() {
 				return this.fields.replace(/\s+/g, "").split(',')
+			},
+			getItems() {
+				this.pushItemOrMetaData(this.dataItems)
+				return this.items
 			}
 		},
         methods: {
@@ -76,19 +77,21 @@
 
             pushItemOrMetaData(response) {
                 const self = this;  
-                if('data' in response && response.data.length > 0) {
-	                self.items = response.data;
-	                self.meta.total = response.total;
-	                self.meta.per_page = response.per_page;
-	                self.meta.current_page = response.current_page;
-	                self.meta.last_page = response.last_page;
-	                self.meta.next_page_url  = response.next_page_url;
-	                self.meta.prev_page_url  = response.prev_page_url;
-	                self.meta.from  = response.from;
-	                self.meta.to   = response.to;                
-	                self.limit = self.meta.per_page                	
-                } else if(response.length) {
-                	self.items = response;
+                if(response !== undefined) {
+                	if('data' in response && response.data.length > 0) {
+		                self.items = response.data;
+		                self.meta.total = response.total;
+		                self.meta.per_page = response.per_page;
+		                self.meta.current_page = response.current_page;
+		                self.meta.last_page = response.last_page;
+		                self.meta.next_page_url  = response.next_page_url;
+		                self.meta.prev_page_url  = response.prev_page_url;
+		                self.meta.from  = response.from;
+		                self.meta.to   = response.to;                
+		                self.limit = self.meta.per_page                	
+	                } else if(response.length) {
+	                	self.items = response;
+	                }	
                 }
             },
             
@@ -98,7 +101,8 @@
 				history.pushState(null, null, `?page=${page}`)
                 axios.get(`?page=${this.page}`).then(response => {
                     this.loading = false
-                    this.pushItemOrMetaData(response.data)
+                    this.dataItems = response.data
+					//this.pushItemOrMetaData(response.data)
                 });
             },
 
