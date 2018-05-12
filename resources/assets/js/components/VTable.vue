@@ -19,6 +19,9 @@
                         <slot name="btn-action" :data="item" :handleAction="handleAction"></slot>
                     </slot>
                 </tr>
+                <tr v-if="getItems.length === 0">
+                	<td :colspan="tblHeaders.length" align="center">No Record Found!</td>
+                </tr>
 		    </tbody>
 		</table>
         <pagination :meta="meta" @changed="fetch"></pagination> 
@@ -35,6 +38,11 @@
 		},
 		mounted() {
 			this.dataItems = this.data
+		},
+		watch: {
+			data() {
+				this.dataItems = this.data
+			}
 		},
 		data() {			
             return {
@@ -68,16 +76,31 @@
 		},
         methods: {
             hasValue (item, column) {
+            	let relation = this.hasRelation(column)
+            	if(relation) {
+            		var [column] = relation
+            	}
                 return item[column] !== undefined
             },
 
             itemValue (item, column) {
+            	if(column.includes(".")) {
+            		let [colName, ...fields] = column.split('.')
+            		return item[colName][fields.join('.')]
+            	}
                 return item[column]
+            },
+
+            hasRelation(str) {
+            	if(str.includes(".")) {
+            		return str.split('.')
+            	}
+            	return false
             },
 
             pushItemOrMetaData(response) {
                 const self = this;  
-                if(response !== undefined) {
+                if(response !== undefined && response !== null && response !== '') {
                 	if('data' in response && response.data.length > 0) {
 		                self.items = response.data;
 		                self.meta.total = response.total;
