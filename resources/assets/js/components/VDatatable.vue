@@ -42,6 +42,9 @@
                                     {{ column.label }}
                                 </th>
                             </slot>
+                            <slot v-if="btnAction" name="action-column">
+                                <th class="sorting">Action</th>
+                            </slot>
                         </tr>
                     </thead>
                     <tbody :class="(loading) ? 'loader' : ''">
@@ -88,7 +91,7 @@
                             </slot>
                         </tr>
                         <tr v-if="items.length === 0">
-                            <td :colspan="columns.length" align="center"><strong>No Record Found</strong></td>
+                            <td :colspan="columns.length + 1" align="center"><strong>No Record Found</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -118,7 +121,20 @@
             } else {
                 this.dbSearchColumns = this.searchColumns
             }
-            setTimeout(() => this.pushItemOrMetaData(this.data), 500)
+            this.loading = true
+            setTimeout(() => {
+                this.loading = false
+                this.pushItemOrMetaData(this.data)
+            }, 500)
+        },
+        watch: {
+            data() {
+                this.loading = true
+                setTimeout(() => {
+                    this.loading = false
+                    this.pushItemOrMetaData(this.data)
+                }, 500)
+            }
         },
         data() {
             return {                
@@ -162,27 +178,39 @@
         },
         methods: {
             hasValue (item, column) {
-                return item[column.field] !== undefined
+                let field = column.field
+                if(field.includes('.')) {
+                    let split = field.split('.')[0]
+                    return item[split] !== undefined   
+                }
+                return item[field] !== undefined
             },
 
             itemValue (item, column) {
-                //column.toLowerCase()
-                return _(item[column.field]).truncate(25)
+                let field = column.field
+                if(field.includes('.')) {
+                    let [relColumn, relField] = field.split('.')
+                    return (item[relColumn]) ? item[relColumn][relField] : '-'   
+                }
+                return _(item[field]).truncate(25)
             },
 
             pushItemOrMetaData(response) {
-                const self = this;  
-                self.items = response.data;
-                self.meta.total = response.total;
-                self.meta.per_page = response.per_page;
-                self.meta.current_page = response.current_page;
-                self.meta.last_page = response.last_page;
-                self.meta.next_page_url  = response.next_page_url;
-                self.meta.prev_page_url  = response.prev_page_url;
-                self.meta.from  = response.from;
-                self.meta.to   = response.to;                
-                self.limit = self.meta.per_page
-                //if('data' in response && response.data.length > 0) {}
+                if(response !== undefined && response !== '' && response !== null) {
+                    if('data' in response) {
+                        const self = this;  
+                        self.items = response.data;
+                        self.meta.total = response.total;
+                        self.meta.per_page = response.per_page;
+                        self.meta.current_page = response.current_page;
+                        self.meta.last_page = response.last_page;
+                        self.meta.next_page_url  = response.next_page_url;
+                        self.meta.prev_page_url  = response.prev_page_url;
+                        self.meta.from  = response.from;
+                        self.meta.to   = response.to;                
+                        self.limit = self.meta.per_page
+                    }
+                }
             },
             
             fetch(page) {
